@@ -1,0 +1,21 @@
+services:
+  gluster:
+    image: gluster:9.2
+    build:
+      context: .
+    network_mode: host
+    privileged: true
+    restart: always
+    healthcheck:
+      test: bash -c "
+          systemctl status glusterd.service | grep 'active (running)'
+          || systemctl poweroff
+        "
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+    volumes:
+        - /opt/docker/gluster/etc:/etc/glusterfs
+        - /opt/docker/gluster/data:/data/glusterfs
+        - /opt/docker/gluster/lib:/var/lib/glusterd
+        - /opt/docker/gluster/log:/var/log/glusterfs
